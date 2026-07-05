@@ -45,12 +45,13 @@ def upgrade() -> None:
         "ix_magic_link_tokens_token_hash", "magic_link_tokens", ["token_hash"], unique=True
     )
 
+    # Not created explicitly here: create_table() below creates these enum
+    # types itself as part of creating monitor_configs (the only table that
+    # uses them). Creating them again explicitly caused a duplicate-type error.
     frequency_enum = postgresql.ENUM(
         "immediate", "daily", "weekly", name="frequency_enum"
     )
     status_enum = postgresql.ENUM("active", "paused", name="config_status_enum")
-    frequency_enum.create(op.get_bind(), checkfirst=True)
-    status_enum.create(op.get_bind(), checkfirst=True)
 
     op.create_table(
         "monitor_configs",
@@ -117,9 +118,9 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_index("ix_email_analyses_config_id", table_name="email_analyses")
     op.drop_table("email_analyses")
+    # Dropping monitor_configs also drops frequency_enum/config_status_enum,
+    # since they're only used by this table's columns.
     op.drop_table("monitor_configs")
-    postgresql.ENUM(name="config_status_enum").drop(op.get_bind(), checkfirst=True)
-    postgresql.ENUM(name="frequency_enum").drop(op.get_bind(), checkfirst=True)
     op.drop_index("ix_magic_link_tokens_token_hash", table_name="magic_link_tokens")
     op.drop_index("ix_magic_link_tokens_user_id", table_name="magic_link_tokens")
     op.drop_table("magic_link_tokens")
