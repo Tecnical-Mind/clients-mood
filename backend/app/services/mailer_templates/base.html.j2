@@ -1,0 +1,13 @@
+{# Shared inline-styled layout — email clients need inline CSS, no external stylesheet #}
+<div style="font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; max-width: 640px; margin: 0 auto; color: #1f2933;">
+  <div style="padding: 24px 24px 8px 24px;">
+    <h1 style="font-size: 18px; margin: 0 0 4px 0;">{{ title }}</h1>
+    <p style="font-size: 13px; color: #6b7280; margin: 0 0 20px 0;">Client's Mood</p>
+  </div>
+  <div style="padding: 0 24px 24px 24px;">
+    {% block content %}{% endblock %}
+  </div>
+  <div style="padding: 16px 24px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #9ca3af;">
+    Este informe fue generado automáticamente a partir del análisis de tono de tus correos entrantes.
+  </div>
+</div>
